@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periksa Teks Narasi</title>
+</head>
+<body>
+    <h1>Periksa Teks Narasi Anak</h1>
+    <textarea id="storyInput" rows="10" cols="50" placeholder="Tulis cerita anak disini..."></textarea><br><br>
+    <button onclick="checkText()">Periksa Ceritaku</button>
+
+    <h2>Feedback dari OpenAI:</h2>
+    <p id="feedback"></p>
+
+    <script>
+        async function checkText() {
+            const storyText = document.getElementById("storyInput").value;
+            try {
+                const response = await fetch('https://api.openai.com/v1/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer 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' // Ganti dengan API Key kamu
+                    },
+                    body: JSON.stringify({
+                        model: 'text-davinci-003',
+                        prompt: `Berikan umpan balik tentang teks berikut untuk anak-anak dalam menulis narasi:\n\n${storyText}`,
+                        max_tokens: 1000,
+                    })
+                });
+
+                const data = await response.json();
+                console.log(data); // Ini untuk cek response API
+
+                // Menambahkan pengecekan untuk memastikan data tersedia
+                if (data.choices && data.choices.length > 0) {
+                    document.getElementById("feedback").innerText = data.choices[0].text;
+                } else {
+                    document.getElementById("feedback").innerText = "Tidak ada feedback dari OpenAI.";
+                }
+            } catch (error) {
+                console.error("Error: ", error);
+                document.getElementById("feedback").innerText = "Terjadi kesalahan saat memproses permintaan.";
+            }
+        }
+    </script>
+</body>
+</html>
